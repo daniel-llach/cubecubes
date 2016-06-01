@@ -43,9 +43,12 @@ scene.objects.link(cam_ob)
 cam_ob.location = (-30,-15.0,29.0)
 cam_ob.rotation_euler = (1, 0, -1)
 
-
-
-
-
+# create initial cubecubes - todo: create de initial matrix API like CubeCubes([1,1,0],[1,0,1],[1,1,0])
 first_cubes =  CubeCubes(4)
 first_cubes.matrix
+
+# choose one neighbour to move
+
+# moove the chosen neighbour
+
+# get new matrix state and loop 
