@@ -7,6 +7,8 @@ ctx = bpy.context
 ops = bpy.ops
 scene = bpy.context.scene
 
+print("cubecubes hi")
+
 class CubeCubes:
     def __init__(self, num):
         self.num = num
