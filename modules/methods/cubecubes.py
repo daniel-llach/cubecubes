@@ -35,7 +35,8 @@ class CubeCubes:
 
 
                   # create a cube
-                  ops.mesh.primitive_cube_add(location=(x,y,z), rotation=(rx,ry,rz))
+                  c1 = ops.mesh.primitive_cube_add(location=(x,y,z), rotation=(rx,ry,rz))
+                  c1.relocate(location=xxx, rotation=xxx)
 
                   # get current cube
                   context = bpy.context

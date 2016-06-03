@@ -1,4 +1,5 @@
 def SetEnvironment(scene, world, ops, data):
+    print('Init setEnvironment')
     CleanAll(ops, data)
     RenderStuff(scene)
     SetBackground(scene, world, ops)
@@ -13,21 +14,13 @@ def SetBackground(scene, world, ops):
     bg.inputs[1].default_value = 1.0
 def CleanAll(ops, data):
     # clean all
-    ops.object.mode_set(mode='OBJECT')
-    ops.object.select_by_type(type='MESH')
-    ops.object.delete(use_global=False)
-
-    for item in data.meshes:
-        data.meshes.remove(item)
+    ops.object.delete(use_global=True)
 def SetLights(scene, data):
-    # Create new lamp datablock
     lamp_data = data.lamps.new(name="New Lamp", type='POINT')
-    # Create new object with our lamp datablock
     lamp_object = data.objects.new(name="New Lamp", object_data=lamp_data)
-    # Link lamp object to the scene so it'll appear in this scene
+    # print(dir(lamp_object))
     scene.objects.link(lamp_object)
-    # Place lamp to a specified location
-    lamp_object.location = (-5.0, -5.0, 15.0)
+    lamp_object.location = (-4.0, -4.0, 12.0)
     # And finally select it make active
     lamp_object.select = True
     scene.objects.active = lamp_object

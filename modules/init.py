@@ -11,7 +11,7 @@ imp.reload(methods.environment)
 # set variables
 ctx = bpy.context
 ops = bpy.ops
-scene = bpy.context.scene
+scene = ctx.scene
 data = bpy.data
 world = data.worlds['World']
 
