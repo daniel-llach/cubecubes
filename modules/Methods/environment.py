@@ -35,6 +35,6 @@ def SetCamera(scene, data):
     # create camera
     cam = data.cameras.new("Camera")
     cam_ob = data.objects.new("Camera", cam)
-    scene.objects.link(cam_ob)
     cam_ob.location = (-30,-15.0,29.0)
     cam_ob.rotation_euler = (1, 0, -1)
+    scene.objects.link(cam_ob)

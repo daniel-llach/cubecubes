@@ -3,6 +3,8 @@ import methods.environment
 from methods.cubecubes import CubeCubes
 import imp
 
+#print(bpy.context.space_data.text.filepath)
+
 #reload modules
 imp.reload(methods.environment)
 
