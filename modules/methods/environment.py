@@ -20,6 +20,7 @@ def CleanAll(ops, data, ctx):
             data.materials.remove(material)
 
     # clean objects
+    ops.object.select_all(action='TOGGLE')
     selected_obj = ctx.selected_objects
     # trick: select all objects whit toggle.
     # this mean that if exist an selected objects

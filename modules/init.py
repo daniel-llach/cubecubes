@@ -18,16 +18,18 @@ world = data.worlds['World']
 # set render, background, lights and camera
 methods.environment.SetEnvironment(scene, world, ops, data, ctx)
 
-
-# create initial cubecubes - todo: create de initial matrix API like CubeCubes([1,1,0],[1,0,1],[1,1,0])
+# create initial cubecubes
 first_cubes =  CubeCubes(4)
-first_cubes.matrix
+first_cubes.create
 
 for obj in bpy.data.objects:
     print(obj.name)
 
-# choose one neighbour to move
+# hide somes cubes randomly
+first_cubes.randomhide
 
-# moove the chosen neighbour
+# choose one neighbour of each hide cubes to move
 
-# get new matrix state and loop
+# moove the chosens neighbours
+
+# at the end of the move get the actual hidden cubes and repeat de moove

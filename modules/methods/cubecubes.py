@@ -10,8 +10,9 @@ scene = bpy.context.scene
 class CubeCubes:
     def __init__(self, num):
         self.num = num
-        self.matrix = self.create_cube(num)
-    def create_cube(self, num):
+        self.create = self.create_cubes(num)
+        self.randomhide = self.hide_cubes(num)
+    def create_cubes(self, num):
         # create cubes
         for j in range(0,num):
             x = (j*2) + j/1.001
@@ -42,3 +43,31 @@ class CubeCubes:
                   mat.diffuse_color = (.0043,.03, i)
                   # put material to the current cube
                   cube.active_material = mat
+    def hide_cubes(self, num):
+        # get the pool size
+        poolsize = num * num * num
+        # take some random numbers and say that hide
+        for el in range(num):
+            a_cube = random.randint(0,poolsize-1)
+            # if the number is 0 just name it Cube
+            if a_cube == 0:
+                name = 'Cube'
+            else:
+                # else if the number has more than 1 digit add 0 then 00
+                if len(str(a_cube)) > 1:
+                    name = 'Cube.0' + str(a_cube)
+                else:
+                    name = 'Cube.00' + str(a_cube)
+            self.hide_cube(name)
+    def hide_cube(self, name):
+        # unselect all
+        for item in bpy.context.selectable_objects:
+            item.select = False
+        # select cube
+        obj = bpy.data.objects[name]
+        obj.select = True
+        # active selected object
+        bpy.context.scene.objects.active = obj
+        # hide cube
+        bpy.context.object.hide = True
+        bpy.context.object.hide_render = True
