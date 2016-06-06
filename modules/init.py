@@ -16,11 +16,15 @@ data = bpy.data
 world = data.worlds['World']
 
 # set render, background, lights and camera
-methods.environment.SetEnvironment(scene, world, ops, data)
+methods.environment.SetEnvironment(scene, world, ops, data, ctx)
+
 
 # create initial cubecubes - todo: create de initial matrix API like CubeCubes([1,1,0],[1,0,1],[1,1,0])
 first_cubes =  CubeCubes(4)
 first_cubes.matrix
+
+for obj in bpy.data.objects:
+    print(obj.name)
 
 # choose one neighbour to move
 

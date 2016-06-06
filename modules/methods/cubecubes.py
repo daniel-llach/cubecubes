@@ -7,8 +7,6 @@ ctx = bpy.context
 ops = bpy.ops
 scene = bpy.context.scene
 
-print("cubecubes hi")
-
 class CubeCubes:
     def __init__(self, num):
         self.num = num
@@ -16,9 +14,7 @@ class CubeCubes:
     def create_cube(self, num):
         # create cubes
         for j in range(0,num):
-
             x = (j*2) + j/1.001
-
             for n in range(0,num):
 
                 y = (n*2) + n/1.001
@@ -33,7 +29,6 @@ class CubeCubes:
                   rz= 0
                   #rz = random.uniform(0,6.63)
 
-
                   # create a cube
                   ops.mesh.primitive_cube_add(location=(x,y,z), rotation=(rx,ry,rz))
 
@@ -41,10 +36,8 @@ class CubeCubes:
                   context = bpy.context
                   cube = ctx.object
 
-                  #print(dir(cube.location))
-
                   # set material
-                  mat = bpy.data.materials.new("PKHG")
+                  mat = bpy.data.materials.new("CUBE")
                   i = .0266 + (i*.005)
                   mat.diffuse_color = (.0043,.03, i)
                   # put material to the current cube
