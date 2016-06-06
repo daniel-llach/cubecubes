@@ -1,6 +1,5 @@
 import bpy
 import random
-#from mathutils import Matrix
 
 # context
 ctx = bpy.context

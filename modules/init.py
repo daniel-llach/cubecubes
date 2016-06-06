@@ -3,27 +3,15 @@ import methods.environment
 from methods.cubecubes import CubeCubes
 import imp
 
-#print(bpy.context.space_data.text.filepath)
-
 #reload modules
 imp.reload(methods.environment)
 
-# set variables
-ctx = bpy.context
-ops = bpy.ops
-scene = ctx.scene
-data = bpy.data
-world = data.worlds['World']
-
 # set render, background, lights and camera
-methods.environment.SetEnvironment(scene, world, ops, data, ctx)
+methods.environment.SetEnvironment()
 
 # create initial cubecubes
 first_cubes =  CubeCubes(4)
 first_cubes.create
-
-for obj in bpy.data.objects:
-    print(obj.name)
 
 # hide somes cubes randomly
 first_cubes.randomhide

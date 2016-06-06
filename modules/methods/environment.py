@@ -1,18 +1,27 @@
-def SetEnvironment(scene, world, ops, data, ctx):
+import bpy
+
+# context
+ctx = bpy.context
+ops = bpy.ops
+scene = ctx.scene
+data = bpy.data
+world = data.worlds['World']
+
+def SetEnvironment():
     print('Init setEnvironment')
-    CleanAll(ops, data, ctx)
-    RenderStuff(scene)
-    SetBackground(scene, world, ops)
-    SetLights(scene, data)
-    SetCamera(scene, data)
-def RenderStuff(scene):
+    CleanAll()
+    RenderStuff()
+    SetBackground()
+    SetLights()
+    SetCamera()
+def RenderStuff():
     scene.render.engine = 'CYCLES'
     scene.world.use_nodes = True
-def SetBackground(scene, world, ops):
+def SetBackground():
     bg = world.node_tree.nodes['Background']
     bg.inputs[0].default_value[:3] = (.007,.203,.026)
     bg.inputs[1].default_value = 1.0
-def CleanAll(ops, data, ctx):
+def CleanAll():
     # clean all
     # clean materials
     for material in data.materials:
@@ -30,7 +39,7 @@ def CleanAll(ops, data, ctx):
     ops.object.select_all(action='TOGGLE')
     ops.object.delete(use_global=True)
 
-def SetLights(scene, data):
+def SetLights():
     lamp_data = data.lamps.new(name="New Lamp", type='POINT')
     lamp_object = data.objects.new(name="New Lamp", object_data=lamp_data)
     scene.objects.link(lamp_object)
@@ -38,7 +47,7 @@ def SetLights(scene, data):
     # And finally select it make active
     lamp_object.select = True
     scene.objects.active = lamp_object
-def SetCamera(scene, data):
+def SetCamera():
     # create camera
     cam = data.cameras.new("Camera")
     cam_ob = data.objects.new("Camera", cam)
