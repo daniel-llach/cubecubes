@@ -1,4 +1,4 @@
-import bpy
+# import bpy
 import methods.environment
 from methods.cubecubes import CubeCubes
 import imp

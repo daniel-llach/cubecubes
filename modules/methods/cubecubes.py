@@ -43,19 +43,22 @@ class CubeCubes:
                   # put material to the current cube
                   cube.active_material = mat
     def hide_cubes(self, num):
-        # get the pool size
+        # get the pool size of the perfect cube
         poolsize = num * num * num
         # take some random numbers and say that hide
-        for el in range(num):
+        numbers = num + ( int(num/3) * int(num/3) )
+        for el in range(numbers):
             a_cube = random.randint(0,poolsize-1)
             # if the number is 0 just name it Cube
             if a_cube == 0:
                 name = 'Cube'
             else:
                 # else if the number has more than 1 digit add 0 then 00
-                if len(str(a_cube)) > 1:
+                if len(str(a_cube)) > 2:
+                    name = 'Cube.' + str(a_cube)
+                elif len(str(a_cube)) == 2:
                     name = 'Cube.0' + str(a_cube)
-                else:
+                elif len(str(a_cube)) == 1:
                     name = 'Cube.00' + str(a_cube)
             self.hide_cube(name)
     def hide_cube(self, name):
