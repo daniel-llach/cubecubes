@@ -3,14 +3,17 @@ import methods.environment
 from methods.cubecubes import CubeCubes
 import imp
 
-#reload modules
+#reload modules in blender
 imp.reload(methods.environment)
 
 # set render, background, materials, lights and camera
 methods.environment.SetEnvironment()
 
-# create initial cubecubes
+# init cubecubes
 first_cubes = CubeCubes(4)
+# clean possible cubecubes cache data
+first_cubes.clean
+# create cubecubes
 first_cubes.create
 
 # hide somes cubes randomly
