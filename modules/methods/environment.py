@@ -27,7 +27,6 @@ def CleanAll():
     for material in data.materials:
         if not material.users:
             data.materials.remove(material)
-
     # clean objects
     ops.object.select_all(action='TOGGLE')
     selected_obj = ctx.selected_objects
@@ -38,7 +37,6 @@ def CleanAll():
         ops.object.select_all(action='TOGGLE')
     ops.object.select_all(action='TOGGLE')
     ops.object.delete(use_global=True)
-
 def SetLights():
     lamp_data = data.lamps.new(name="New Lamp", type='POINT')
     lamp_object = data.objects.new(name="New Lamp", object_data=lamp_data)

@@ -6,7 +6,10 @@ ctx = bpy.context
 ops = bpy.ops
 scene = bpy.context.scene
 
-# current hidden cubes
+# current lucky numbers
+global lucky_numbers
+lucky_numbers = []
+# current hidden cubes names
 global hidden_cubes
 hidden_cubes = []
 
@@ -15,7 +18,8 @@ class CubeCubes:
         self.num = num
         self.clean = self.clean()
         self.create = self.create_cubes(num)
-        self.randomhide = self.hide_cubes(num)
+        self.luckynumbers = self.get_lucky_numbers(num)
+        self.hidecubes = self.hide_cubes()
     def clean(self):
         # if array is not empty
         if hidden_cubes:
@@ -45,13 +49,18 @@ class CubeCubes:
                   mat.diffuse_color = (.0043,.03, i)
                   # put material to the current cube
                   cube.active_material = mat
-    def hide_cubes(self, num):
+    def get_lucky_numbers(self, num):
         # get the pool size of the perfect cube
         poolsize = num * num * num
         # take some random numbers
         numbers = num + ( int(num/3) * int(num/3) )
         # use shuffle for unique random list
+        global lucky_numbers
         lucky_numbers = random.sample(range(poolsize),numbers)
+        print('lucky_numbers:')
+        print(lucky_numbers)
+    def hide_cubes(self):
+        global lucky_numbers
         # set names from choosen lucky numbers
         for el in lucky_numbers:
             # if the number is 0 just name it Cube

@@ -15,8 +15,10 @@ first_cubes = CubeCubes(4)
 first_cubes.clean
 # create cubecubes
 first_cubes.create
-# hide somes cubes randomly
-first_cubes.randomhide
+# create lucky numbers
+first_cubes.luckynumbers
+# hide lucky numbers cube
+first_cubes.hidecubes
 
 # choose one neighbour of each hide cubes to move
 
