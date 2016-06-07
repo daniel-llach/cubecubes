@@ -1,11 +1,16 @@
 import bpy
 import random
+from operator import add
+from operator import sub
 
 # context
 ctx = bpy.context
 ops = bpy.ops
 scene = bpy.context.scene
 
+# total cubes
+global total_cubes
+total_cubes = 0
 # current lucky numbers
 global lucky_numbers
 lucky_numbers = []
@@ -20,6 +25,7 @@ class CubeCubes:
         self.create = self.create_cubes(num)
         self.luckynumbers = self.get_lucky_numbers(num)
         self.hidecubes = self.hide_cubes()
+        self.neighbour = self.choose_neighbour(num)
     def clean(self):
         # if array is not empty
         if hidden_cubes:
@@ -57,10 +63,10 @@ class CubeCubes:
         # use shuffle for unique random list
         global lucky_numbers
         lucky_numbers = random.sample(range(poolsize),numbers)
-        print('lucky_numbers:')
-        print(lucky_numbers)
+        # save total cubes
+        global total_cubes
+        total_cubes = poolsize
     def hide_cubes(self):
-        global lucky_numbers
         # set names from choosen lucky numbers
         for el in lucky_numbers:
             # if the number is 0 just name it Cube
@@ -78,8 +84,6 @@ class CubeCubes:
             # save in local memory
             global hidden_cubes
             hidden_cubes.append(name)
-        print('hidden cubes:')
-        print(hidden_cubes)
     def hide_cube(self, name):
         # unselect all
         for item in bpy.context.selectable_objects:
@@ -92,3 +96,104 @@ class CubeCubes:
         # hide cube
         bpy.context.object.hide = True
         bpy.context.object.hide_render = True
+    def choose_neighbour(self, num):
+        # define possible neighbour for each
+        # neighbour pool and choose one valid
+        for cube_num in lucky_numbers:
+            # define cube position in axis array [x,y,z]
+            cube_axis = self.get_cube_axis(cube_num, num)
+            # define neighbors pool
+            nbr_pool = []
+            # evaluate possible neighbour
+            # up
+            up_nbr =  cube_axis[2]+1
+            # validate if cube is in the cube
+            if up_nbr > -1 and up_nbr < num:
+                # define upper cube axis
+                up_nbr_axis = list( map(add, cube_axis, [0,0,1]) )
+                # convert axis to cube number
+                up_cube_number = self.get_cube_number( up_nbr_axis, num )
+                # add to neighbour pool
+                nbr_pool.append( up_cube_number )
+            # down
+            down_nbr =  cube_axis[2]-1
+            # validate if cube is in the cube
+            if down_nbr > -1 and down_nbr < num:
+                # define down cube axis
+                down_nbr_axis = list( map(sub, cube_axis, [0,0,1]) )
+                # convert axis to cube number
+                down_cube_number = self.get_cube_number( down_nbr_axis, num )
+                # add to neighbour pool
+                nbr_pool.append( down_cube_number )
+            # left
+            left_nbr =  cube_axis[1]+1
+            # validate if cube is in the cube
+            if left_nbr > -1 and left_nbr < num:
+                # define down cube axis
+                left_nbr_axis = list( map(add, cube_axis, [0,1,0]) )
+                # convert axis to cube number
+                left_cube_number = self.get_cube_number( left_nbr_axis, num )
+                # add to neighbour pool
+                nbr_pool.append( left_cube_number )
+            # right
+            right_nbr =  cube_axis[1]-1
+            # validate if cube is in the cube
+            if right_nbr > -1 and right_nbr < num:
+                # define down cube axis
+                right_nbr_axis = list( map(sub, cube_axis, [0,1,0]) )
+                # convert axis to cube number
+                right_cube_number = self.get_cube_number( right_nbr_axis, num )
+                # add to neighbour pool
+                nbr_pool.append( right_cube_number )
+            # front
+            front_nbr =  cube_axis[0]+1
+            # validate if cube is in the cube
+            if front_nbr > -1 and front_nbr < num:
+                # define down cube axis
+                front_nbr_axis = list( map(add, cube_axis, [1,0,0]) )
+                # convert axis to cube number
+                front_cube_number = self.get_cube_number( front_nbr_axis, num )
+                # add to neighbour pool
+                nbr_pool.append( front_cube_number )
+            # back
+            back_nbr =  cube_axis[0]-1
+            # validate if cube is in the cube
+            if back_nbr > -1 and back_nbr < num:
+                # define down cube axis
+                back_nbr_axis = list( map(sub, cube_axis, [1,0,0]) )
+                # convert axis to cube number
+                back_cube_number = self.get_cube_number( back_nbr_axis, num )
+                # add to neighbour pool
+                nbr_pool.append( back_cube_number )
+
+            print('cube:')
+            print(cube_num)
+            print('valid neighbour: ')
+            print(nbr_pool)
+
+
+    def get_cube_axis(self, cube_num, num):
+        axis = []
+        x = cube_num // (num*num)
+        axis.append(x)
+        y = (cube_num % (num*num) ) // num
+        axis.append(y)
+        z = (cube_num % num)
+        axis.append(z)
+        return axis
+    def get_cube_number(self, axis, num):
+        x = axis[0] * (num*num)
+        y = axis[1] * (num)
+        z = axis[2]
+        cube_num = x+y+z
+        return cube_num
+
+
+
+
+
+        # print('lucky_numbers:')
+        # print(lucky_numbers)
+        #
+        # print('hidden cubes:')
+        # print(hidden_cubes)
