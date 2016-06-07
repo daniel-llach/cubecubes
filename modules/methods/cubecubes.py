@@ -17,6 +17,9 @@ lucky_numbers = []
 # current hidden cubes names
 global hidden_cubes
 hidden_cubes = []
+# movements
+global movements
+movements = []
 
 class CubeCubes:
     def __init__(self, num):
@@ -26,6 +29,7 @@ class CubeCubes:
         self.luckynumbers = self.get_lucky_numbers(num)
         self.hidecubes = self.hide_cubes()
         self.neighbour = self.choose_neighbour(num)
+        self.move = self.let_move(num)
     def clean(self):
         # if array is not empty
         if hidden_cubes:
@@ -110,13 +114,9 @@ class CubeCubes:
             possible_nbr = self.possible_neighbors(cube_axis, num)
             # select a neighbour
             neighbour = random.sample(possible_nbr, 1)[0]
-            # get neighbour axis
-            neighbour_axis = self.get_cube_axis(neighbour, num)
 
-            print('cube_axis:')
-            print(cube_axis)
-            print('neighbour_axis:')
-            print(neighbour_axis)
+            global movements
+            movements.append([cube_num,neighbour])
     def get_cube_axis(self, cube_num, num):
         axis = []
         x = cube_num // (num*num)
@@ -232,3 +232,6 @@ class CubeCubes:
                 nbr_pool.append( back_cube_number )
 
         return list(nbr_pool)
+    def let_move(self, num):
+        print('movements')
+        print(movements)

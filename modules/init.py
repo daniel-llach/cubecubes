@@ -23,5 +23,5 @@ cubes.hidecubes
 # choose one neighbour of each hide cubes to move
 cubes.neighbour
 # move the chosens neighbours to the holes
-
+cubes.move
 # at the end of the move get the actual hidden cubes and repeat de moove
