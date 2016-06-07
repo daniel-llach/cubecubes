@@ -106,112 +106,17 @@ class CubeCubes:
         for cube_num in lucky_numbers:
             # define cube position in axis array [x,y,z]
             cube_axis = self.get_cube_axis(cube_num, num)
-            # define neighbors pool
-            nbr_pool = []
-            # evaluate possible neighbour
-            # up
-            up_nbr =  cube_axis[2]+1
-            # validate if cube is in the cube
-            if up_nbr > -1 and up_nbr < num:
-                # define upper cube axis
-                up_nbr_axis = list( map(add, cube_axis, [0,0,1]) )
-                # convert axis to cube number
-                up_cube_number = self.get_cube_number( up_nbr_axis, num )
-                # check if cube is visible
-                # get cube object name
-                name = self.get_cube_name( up_cube_number )
-                # select cube
-                cube_obj = bpy.data.objects[name]
-                if not cube_obj.hide:
-                    # add to neighbour pool
-                    nbr_pool.append( up_cube_number )
-            # down
-            down_nbr =  cube_axis[2]-1
-            # validate if cube is in the cube
-            if down_nbr > -1 and down_nbr < num:
-                # define down cube axis
-                down_nbr_axis = list( map(sub, cube_axis, [0,0,1]) )
-                # convert axis to cube number
-                down_cube_number = self.get_cube_number( down_nbr_axis, num )
-                # check if cube is visible
-                # get cube object name
-                name = self.get_cube_name( down_cube_number )
-                # select cube
-                cube_obj = bpy.data.objects[name]
-                if not cube_obj.hide:
-                    # add to neighbour pool
-                    nbr_pool.append( down_cube_number )
-            # left
-            left_nbr =  cube_axis[1]+1
-            # validate if cube is in the cube
-            if left_nbr > -1 and left_nbr < num:
-                # define down cube axis
-                left_nbr_axis = list( map(add, cube_axis, [0,1,0]) )
-                # convert axis to cube number
-                left_cube_number = self.get_cube_number( left_nbr_axis, num )
-                # check if cube is visible
-                # get cube object name
-                name = self.get_cube_name( left_cube_number )
-                # select cube
-                cube_obj = bpy.data.objects[name]
-                if not cube_obj.hide:
-                    # add to neighbour pool
-                    nbr_pool.append( left_cube_number )
-            # right
-            right_nbr =  cube_axis[1]-1
-            # validate if cube is in the cube
-            if right_nbr > -1 and right_nbr < num:
-                # define down cube axis
-                right_nbr_axis = list( map(sub, cube_axis, [0,1,0]) )
-                # convert axis to cube number
-                right_cube_number = self.get_cube_number( right_nbr_axis, num )
-                # check if cube is visible
-                # get cube object name
-                name = self.get_cube_name( right_cube_number )
-                # select cube
-                cube_obj = bpy.data.objects[name]
-                if not cube_obj.hide:
-                    # add to neighbour pool
-                    nbr_pool.append( right_cube_number )
-            # front
-            front_nbr =  cube_axis[0]+1
-            # validate if cube is in the cube
-            if front_nbr > -1 and front_nbr < num:
-                # define down cube axis
-                front_nbr_axis = list( map(add, cube_axis, [1,0,0]) )
-                # convert axis to cube number
-                front_cube_number = self.get_cube_number( front_nbr_axis, num )
-                # check if cube is visible
-                # get cube object name
-                name = self.get_cube_name( front_cube_number )
-                # select cube
-                cube_obj = bpy.data.objects[name]
-                if not cube_obj.hide:
-                    # add to neighbour pool
-                    nbr_pool.append( front_cube_number )
-            # back
-            back_nbr =  cube_axis[0]-1
-            # validate if cube is in the cube
-            if back_nbr > -1 and back_nbr < num:
-                # define down cube axis
-                back_nbr_axis = list( map(sub, cube_axis, [1,0,0]) )
-                # convert axis to cube number
-                back_cube_number = self.get_cube_number( back_nbr_axis, num )
-                # check if cube is visible
-                # get cube object name
-                name = self.get_cube_name( back_cube_number )
-                # select cube
-                cube_obj = bpy.data.objects[name]
-                if not cube_obj.hide:
-                    # add to neighbour pool
-                    nbr_pool.append( back_cube_number )
+            # get valid possible neighbors
+            possible_nbr = self.possible_neighbors(cube_axis, num)
+            # select a neighbour
+            neighbour = random.sample(possible_nbr, 1)[0]
+            # get neighbour axis
+            neighbour_axis = self.get_cube_axis(neighbour, num)
 
-            print('cube:')
-            print(cube_num)
-            print('valid neighbour: ')
-            print(nbr_pool)
-
-
+            print('cube_axis:')
+            print(cube_axis)
+            print('neighbour_axis:')
+            print(neighbour_axis)
     def get_cube_axis(self, cube_num, num):
         axis = []
         x = cube_num // (num*num)
@@ -227,13 +132,103 @@ class CubeCubes:
         z = axis[2]
         cube_num = x+y+z
         return cube_num
+    def possible_neighbors(self, cube_axis, num):
+        nbr_pool = []
+        # up
+        up_nbr =  cube_axis[2]+1
+        # validate if cube is in the cube
+        if up_nbr > -1 and up_nbr < num:
+            # define upper cube axis
+            up_nbr_axis = list( map(add, cube_axis, [0,0,1]) )
+            # convert axis to cube number
+            up_cube_number = self.get_cube_number( up_nbr_axis, num )
+            # check if cube is visible
+            # get cube object name
+            name = self.get_cube_name( up_cube_number )
+            # select cube
+            cube_obj = bpy.data.objects[name]
+            if not cube_obj.hide:
+                # add to neighbour pool
+                nbr_pool.append( up_cube_number )
+        # down
+        down_nbr =  cube_axis[2]-1
+        # validate if cube is in the cube
+        if down_nbr > -1 and down_nbr < num:
+            # define down cube axis
+            down_nbr_axis = list( map(sub, cube_axis, [0,0,1]) )
+            # convert axis to cube number
+            down_cube_number = self.get_cube_number( down_nbr_axis, num )
+            # check if cube is visible
+            # get cube object name
+            name = self.get_cube_name( down_cube_number )
+            # select cube
+            cube_obj = bpy.data.objects[name]
+            if not cube_obj.hide:
+                # add to neighbour pool
+                nbr_pool.append( down_cube_number )
+        # left
+        left_nbr =  cube_axis[1]+1
+        # validate if cube is in the cube
+        if left_nbr > -1 and left_nbr < num:
+            # define down cube axis
+            left_nbr_axis = list( map(add, cube_axis, [0,1,0]) )
+            # convert axis to cube number
+            left_cube_number = self.get_cube_number( left_nbr_axis, num )
+            # check if cube is visible
+            # get cube object name
+            name = self.get_cube_name( left_cube_number )
+            # select cube
+            cube_obj = bpy.data.objects[name]
+            if not cube_obj.hide:
+                # add to neighbour pool
+                nbr_pool.append( left_cube_number )
+        # right
+        right_nbr =  cube_axis[1]-1
+        # validate if cube is in the cube
+        if right_nbr > -1 and right_nbr < num:
+            # define down cube axis
+            right_nbr_axis = list( map(sub, cube_axis, [0,1,0]) )
+            # convert axis to cube number
+            right_cube_number = self.get_cube_number( right_nbr_axis, num )
+            # check if cube is visible
+            # get cube object name
+            name = self.get_cube_name( right_cube_number )
+            # select cube
+            cube_obj = bpy.data.objects[name]
+            if not cube_obj.hide:
+                # add to neighbour pool
+                nbr_pool.append( right_cube_number )
+        # front
+        front_nbr =  cube_axis[0]+1
+        # validate if cube is in the cube
+        if front_nbr > -1 and front_nbr < num:
+            # define down cube axis
+            front_nbr_axis = list( map(add, cube_axis, [1,0,0]) )
+            # convert axis to cube number
+            front_cube_number = self.get_cube_number( front_nbr_axis, num )
+            # check if cube is visible
+            # get cube object name
+            name = self.get_cube_name( front_cube_number )
+            # select cube
+            cube_obj = bpy.data.objects[name]
+            if not cube_obj.hide:
+                # add to neighbour pool
+                nbr_pool.append( front_cube_number )
+        # back
+        back_nbr =  cube_axis[0]-1
+        # validate if cube is in the cube
+        if back_nbr > -1 and back_nbr < num:
+            # define down cube axis
+            back_nbr_axis = list( map(sub, cube_axis, [1,0,0]) )
+            # convert axis to cube number
+            back_cube_number = self.get_cube_number( back_nbr_axis, num )
+            # check if cube is visible
+            # get cube object name
+            name = self.get_cube_name( back_cube_number )
+            # select cube
+            cube_obj = bpy.data.objects[name]
+            if not cube_obj.hide:
+                # add to neighbour pool
+                nbr_pool.append( back_cube_number )
 
-
-
-
-
-        # print('lucky_numbers:')
-        # print(lucky_numbers)
-        #
-        # print('hidden cubes:')
-        # print(hidden_cubes)
+        return list(nbr_pool)
