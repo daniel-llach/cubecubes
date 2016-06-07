@@ -244,10 +244,6 @@ class CubeCubes:
         for move in movements:
             # get start obj
             name = self.get_cube_name(move[1])
-            # get start position
-            start_pos = tuple( self.get_cube_axis(move[1], num) )
-            # get end position
-            end_pos = tuple( self.get_cube_axis(move[0], num) )
 
             # select and active cube
             obj = bpy.data.objects[name]
@@ -255,7 +251,10 @@ class CubeCubes:
             bpy.context.scene.objects.active = obj
 
             # move cube
-            obj.location = start_pos
+            from_pos = self.get_cube_axis(move[1], num)
+            from_pos = tuple(map(lambda x: (x*2+x/1.001),from_pos))
+
+            obj.location = from_pos
             obj.keyframe_insert(data_path="location", index=-1)
 
         global current_frame
@@ -271,10 +270,6 @@ class CubeCubes:
         for move in movements:
             # get start obj
             name = self.get_cube_name(move[1])
-            # get start position
-            start_pos = tuple( self.get_cube_axis(move[1], num) )
-            # get end position
-            end_pos = tuple( self.get_cube_axis(move[0], num) )
 
             # select and active cube
             obj = bpy.data.objects[name]
@@ -282,12 +277,7 @@ class CubeCubes:
             bpy.context.scene.objects.active = obj
 
             # move cube
-            obj.location = end_pos
+            to_pos = self.get_cube_axis(move[0], num)
+            to_pos = tuple(map(lambda x: (x*2+x/1.001),to_pos))
+            obj.location = to_pos
             obj.keyframe_insert(data_path="location", index=-1)
-
-            print('cube name:')
-            print(name)
-            print('start position:')
-            print(start_pos)
-            print('end position:')
-            print(end_pos)
