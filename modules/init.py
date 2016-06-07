@@ -15,7 +15,6 @@ first_cubes = CubeCubes(4)
 first_cubes.clean
 # create cubecubes
 first_cubes.create
-
 # hide somes cubes randomly
 first_cubes.randomhide
 

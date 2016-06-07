@@ -7,7 +7,8 @@ ops = bpy.ops
 scene = bpy.context.scene
 
 # current hidden cubes
-global hidden_cubes = []
+global hidden_cubes
+hidden_cubes = []
 
 class CubeCubes:
     def __init__(self, num):
@@ -47,21 +48,23 @@ class CubeCubes:
     def hide_cubes(self, num):
         # get the pool size of the perfect cube
         poolsize = num * num * num
-        # take some random numbers and say that hide
+        # take some random numbers
         numbers = num + ( int(num/3) * int(num/3) )
-        for el in range(numbers):
-            a_cube = random.randint(0,poolsize-1)
+        # use shuffle for unique random list
+        lucky_numbers = random.sample(range(poolsize),numbers)
+        # set names from choosen lucky numbers
+        for el in lucky_numbers:
             # if the number is 0 just name it Cube
-            if a_cube == 0:
+            if el == 0:
                 name = 'Cube'
             else:
                 # else if the number has more than 1 digit add 0 then 00
-                if len(str(a_cube)) > 2:
-                    name = 'Cube.' + str(a_cube)
-                elif len(str(a_cube)) == 2:
-                    name = 'Cube.0' + str(a_cube)
-                elif len(str(a_cube)) == 1:
-                    name = 'Cube.00' + str(a_cube)
+                if len(str(el)) > 2:
+                    name = 'Cube.' + str(el)
+                elif len(str(el)) == 2:
+                    name = 'Cube.0' + str(el)
+                elif len(str(el)) == 1:
+                    name = 'Cube.00' + str(el)
             self.hide_cube(name)
             # save in local memory
             global hidden_cubes
