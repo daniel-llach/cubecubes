@@ -2,12 +2,16 @@ import bpy
 import random
 from operator import add
 from operator import sub
+import mathutils
 
 # context
 ctx = bpy.context
 ops = bpy.ops
 scene = bpy.context.scene
 
+# current frame
+global current_frame
+current_frame = scene.frame_current
 # total cubes
 global total_cubes
 total_cubes = 0
@@ -233,5 +237,57 @@ class CubeCubes:
 
         return list(nbr_pool)
     def let_move(self, num):
-        print('movements')
-        print(movements)
+        print('current frame')
+        print(current_frame)
+
+        # FROM
+        for move in movements:
+            # get start obj
+            name = self.get_cube_name(move[1])
+            # get start position
+            start_pos = tuple( self.get_cube_axis(move[1], num) )
+            # get end position
+            end_pos = tuple( self.get_cube_axis(move[0], num) )
+
+            # select and active cube
+            obj = bpy.data.objects[name]
+            obj.select = True
+            bpy.context.scene.objects.active = obj
+
+            # move cube
+            obj.location = start_pos
+            obj.keyframe_insert(data_path="location", index=-1)
+
+        global current_frame
+        current_frame = current_frame + 40
+
+        # set frame
+        bpy.context.scene.frame_set(current_frame)
+
+        print('current frame')
+        print(current_frame)
+
+        # TO
+        for move in movements:
+            # get start obj
+            name = self.get_cube_name(move[1])
+            # get start position
+            start_pos = tuple( self.get_cube_axis(move[1], num) )
+            # get end position
+            end_pos = tuple( self.get_cube_axis(move[0], num) )
+
+            # select and active cube
+            obj = bpy.data.objects[name]
+            obj.select = True
+            bpy.context.scene.objects.active = obj
+
+            # move cube
+            obj.location = end_pos
+            obj.keyframe_insert(data_path="location", index=-1)
+
+            print('cube name:')
+            print(name)
+            print('start position:')
+            print(start_pos)
+            print('end position:')
+            print(end_pos)
