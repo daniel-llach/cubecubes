@@ -6,11 +6,11 @@ import imp
 #reload modules
 imp.reload(methods.environment)
 
-# set render, background, lights and camera
+# set render, background, materials, lights and camera
 methods.environment.SetEnvironment()
 
 # create initial cubecubes
-first_cubes =  CubeCubes(4)
+first_cubes = CubeCubes(4)
 first_cubes.create
 
 # hide somes cubes randomly

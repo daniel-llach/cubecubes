@@ -6,6 +6,9 @@ ctx = bpy.context
 ops = bpy.ops
 scene = bpy.context.scene
 
+# current hidden cubes
+hidden_cubes = []
+
 class CubeCubes:
     def __init__(self, num):
         self.num = num
@@ -61,6 +64,10 @@ class CubeCubes:
                 elif len(str(a_cube)) == 1:
                     name = 'Cube.00' + str(a_cube)
             self.hide_cube(name)
+            # save in local memory
+            hidden_cubes.append(name)
+        print('hidden cubes:')
+        print(hidden_cubes)
     def hide_cube(self, name):
         # unselect all
         for item in bpy.context.selectable_objects:
