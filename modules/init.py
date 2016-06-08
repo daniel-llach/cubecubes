@@ -18,10 +18,17 @@ cubes.clean
 cubes.create
 # create lucky numbers
 cubes.luckynumbers
-# hide lucky numbers cube
-cubes.hidecubes
-# choose one neighbour of each hide cubes to move
-cubes.neighbour
-# move the chosens neighbours to the holes
-cubes.move
-# at the end of the move get the actual hidden cubes and repeat de moove
+
+for i in range(0,4):
+    # hide lucky numbers cube
+    cubes.hidecubes
+    # choose one neighbour of each hide cubes to move
+    cubes.neighbour
+    # move the chosens neighbors to the holes
+    # and the holes to the neighbors
+    cubes.move
+    # reorder the cubes and reset the names
+    cubes.reset
+
+# TODO: start the loop again from hidecubes
+# whit the position of the current hides cubes
