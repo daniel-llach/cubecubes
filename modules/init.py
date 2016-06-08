@@ -19,7 +19,8 @@ cubes.create
 # create lucky numbers
 cubes.luckynumbers
 
-for i in range(0,4):
+for i in range(3):
+    print('loop')
     # hide lucky numbers cube
     cubes.hidecubes
     # choose one neighbour of each hide cubes to move
@@ -29,6 +30,3 @@ for i in range(0,4):
     cubes.move
     # reorder the cubes and reset the names
     cubes.reset
-
-# TODO: start the loop again from hidecubes
-# whit the position of the current hides cubes

@@ -76,6 +76,8 @@ class CubeCubes:
         total_cubes = poolsize
     def hide_cubes(self):
         # set names from choosen lucky numbers
+        print('lucky numbers en hide_cubes:')
+        print(lucky_numbers)
         for el in lucky_numbers:
             # get cube_name
             name = self.get_cube_name(el)
@@ -237,6 +239,8 @@ class CubeCubes:
         return list(nbr_pool)
     def let_move(self, num):
         # FROM
+        print('current frame:')
+        print(current_frame)
         if current_frame == 1:
             for move in movements:
                 # NEIGHBOUR TO HIDDEN CUBE
@@ -294,14 +298,20 @@ class CubeCubes:
             obj.location = to_pos
             obj.keyframe_insert(data_path="location", index=-1)
     def reset(self, num):
+        print('lucky numbers: (antiguos)')
+        print(lucky_numbers)
         # empty lucky numbers
         global lucky_numbers
         lucky_numbers = []
+        print('lucky numbers: (vacio)')
+        print(lucky_numbers)
         for move in movements:
             # put news lucky numbers
             lucky_numbers.append(move[1])
             # swap names
             self.swap_names(move[0],move[1])
+        print('lucky numbers: (nuevos)')
+        print(lucky_numbers)
     def swap_names(self, cube1, cube2):
         # get names
         name1 = self.get_cube_name(cube1)
