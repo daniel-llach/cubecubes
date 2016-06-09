@@ -25,7 +25,7 @@ global movements
 movements = []
 
 class CubeCubes:
-    def __init__(self, num):
+    def __init__(self, num, loop):
         self.num = num
         self.clean = self.clean()
         self.create = self.create_cubes(num)
@@ -33,7 +33,8 @@ class CubeCubes:
         self.hidecubes = self.hide_cubes()
         self.neighbour = self.choose_neighbour(num)
         self.move = self.let_move(num)
-        self.reset = self.reset(num)
+        self.reset = self.just_reset()
+        self.loop = self.loop(num, loop)
     def clean(self):
         # if array is not empty
         if hidden_cubes:
@@ -110,6 +111,18 @@ class CubeCubes:
         # hide cube
         bpy.context.object.hide = True
         bpy.context.object.hide_render = True
+    def unhide_cube(self, name):
+        # unselect all
+        for item in bpy.context.selectable_objects:
+            item.select = False
+        # select cube
+        obj = bpy.data.objects[name]
+        obj.select = True
+        # active selected object
+        bpy.context.scene.objects.active = obj
+        # unhide cube
+        bpy.context.object.hide = False
+        bpy.context.object.hide_render = False
     def choose_neighbour(self, num):
         # define possible neighbors for each
         # neighbour pool and choose one valid
@@ -118,6 +131,8 @@ class CubeCubes:
             cube_axis = self.get_cube_axis(cube_num, num)
             # get valid possible neighbors
             possible_nbr = self.possible_neighbors(cube_axis, num)
+            print('possible_nbr:')
+            print(possible_nbr)
             # select a neighbour
             neighbour = random.sample(possible_nbr, 1)[0]
             # save into movements list
@@ -297,28 +312,38 @@ class CubeCubes:
             to_pos = tuple(map(lambda x: (x*2+x/1.001),to_pos))
             obj.location = to_pos
             obj.keyframe_insert(data_path="location", index=-1)
-    def reset(self, num):
-        print('lucky numbers: (antiguos)')
-        print(lucky_numbers)
+    def just_reset(self):
         # empty lucky numbers
         global lucky_numbers
         lucky_numbers = []
-        print('lucky numbers: (vacio)')
-        print(lucky_numbers)
+        # unhide hidden_cubes
+        print('hidden_cubes:')
+        print(hidden_cubes)
+        for hcube in hidden_cubes:
+            # hidden_cubes are names no numbers
+            self.unhide_cube(hcube)
+        # empty hidden_cubes
+        global hidden_cubes
+        hidden_cubes = []
         for move in movements:
             # put news lucky numbers
+            global lucky_numbers
             lucky_numbers.append(move[1])
             # swap names
             self.swap_names(move[0],move[1])
-        print('lucky numbers: (nuevos)')
-        print(lucky_numbers)
     def swap_names(self, cube1, cube2):
         # get names
         name1 = self.get_cube_name(cube1)
         name2 = self.get_cube_name(cube2)
-        # rename first
+        # get objects
         obj1 = bpy.data.objects[name1]
-        obj1.name = name2
-        # rename second
         obj2 = bpy.data.objects[name2]
+        # rename
+        obj1.name = name2
         obj2.name = name1
+    def loop(self, num, loop):
+        for i in range(loop):
+            self.hide_cubes()
+            self.choose_neighbour(num)
+            self.let_move(num)
+            self.just_reset()
