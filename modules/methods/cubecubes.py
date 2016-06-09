@@ -25,16 +25,35 @@ global movements
 movements = []
 
 class CubeCubes:
-    def __init__(self, num, loop):
+    def __init__(self, num, times):
         self.num = num
-        self.clean = self.clean()
-        self.create = self.create_cubes(num)
-        self.luckynumbers = self.get_lucky_numbers(num)
-        self.hidecubes = self.hide_cubes()
-        self.neighbour = self.choose_neighbour(num)
-        self.move = self.let_move(num)
-        self.reset = self.just_reset()
-        self.loop = self.loop(num, loop)
+        self.times = times
+        self.start(num, times)
+        # self.clean = self.clean()
+        # self.create = self.create_cubes(num)
+        # self.luckynumbers = self.get_lucky_numbers(num)
+        # self.hidecubes = self.hide_cubes()
+        # self.neighbour = self.choose_neighbour(num)
+        # self.move = self.let_move(num)
+        # self.reset = self.just_reset()
+    def start(self, num, times):
+        # clean possible cubecubes cache data
+        self.clean()
+        # create cubecubes
+        self.create_cubes(num)
+        # create lucky numbers
+        self.get_lucky_numbers(num)
+        # hide lucky numbers cube
+        self.hide_cubes()
+        # choose one neighbour of each hide cubes to move
+        self.choose_neighbour(num)
+        # move the chosens neighbors to the holes
+        # and the holes to the neighbors
+        self.let_move(num)
+        # reorder the cubes and reset the names
+        self.just_reset()
+        # loop
+        self.loop(num, times)
     def clean(self):
         # if array is not empty
         if hidden_cubes:
@@ -341,8 +360,8 @@ class CubeCubes:
         # rename
         obj1.name = name2
         obj2.name = name1
-    def loop(self, num, loop):
-        for i in range(loop):
+    def loop(self, num, times):
+        for i in range(times):
             self.hide_cubes()
             self.choose_neighbour(num)
             self.let_move(num)
