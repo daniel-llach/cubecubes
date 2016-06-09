@@ -8,24 +8,26 @@ ctx = bpy.context
 ops = bpy.ops
 scene = bpy.context.scene
 
-# current frame
-global current_frame
-current_frame = scene.frame_current
-# total cubes
-global total_cubes
-total_cubes = 0
-# current lucky numbers
-global lucky_numbers
-lucky_numbers = []
-# current hidden cubes names
-global hidden_cubes
-hidden_cubes = []
-# movements
-global movements
-movements = []
+
 
 class CubeCubes:
     def __init__(self, num, times):
+        # current frame
+        global current_frame
+        current_frame = scene.frame_current
+        # total cubes
+        global total_cubes
+        total_cubes = 0
+        # current lucky numbers
+        global lucky_numbers
+        lucky_numbers = []
+        # current hidden cubes names
+        global hidden_cubes
+        hidden_cubes = []
+        # movements
+        global movements
+        movements = []
+
         self.num = num
         self.times = times
         self.start(num, times)
@@ -272,40 +274,11 @@ class CubeCubes:
                 nbr_pool.append( back_cube_number )
         return list(nbr_pool)
     def let_move(self, num):
-        # FROM
         print('current frame:')
         print(current_frame)
-        if current_frame == 1:
-            for move in movements:
-                # NEIGHBOUR TO HIDDEN CUBE
-                # get neighbour object name
-                name = self.get_cube_name(move[1])
-                # select and active neighbour cube
-                obj = bpy.data.objects[name]
-                obj.select = True
-                bpy.context.scene.objects.active = obj
-                # move neighbour cube
-                from_pos = self.get_cube_axis(move[1], num)
-                from_pos = tuple(map(lambda x: (x*2+x/1.001),from_pos))
-                obj.location = from_pos
-                obj.keyframe_insert(data_path="location", index=-1)
-                # HIDDEN CUBE TO NEIGHBOUR POSITION
-                # get hidden object name
-                name = self.get_cube_name(move[0])
-                # select and active hidden cube
-                obj = bpy.data.objects[name]
-                obj.select = True
-                bpy.context.scene.objects.active = obj
-                # move hidden cube
-                from_pos = self.get_cube_axis(move[0], num)
-                from_pos = tuple(map(lambda x: (x*2+x/1.001),from_pos))
-                obj.location = from_pos
-                obj.keyframe_insert(data_path="location", index=-1)
-        global current_frame
-        current_frame = current_frame + 40
         # set frame
         bpy.context.scene.frame_set(current_frame)
-        # TO
+        # moves
         for move in movements:
             # NEIGHBOUR
             # get neighbour obj
@@ -331,6 +304,9 @@ class CubeCubes:
             to_pos = tuple(map(lambda x: (x*2+x/1.001),to_pos))
             obj.location = to_pos
             obj.keyframe_insert(data_path="location", index=-1)
+        # add a gap to frames
+        global current_frame
+        current_frame = current_frame + 40
     def just_reset(self):
         # empty lucky numbers
         global lucky_numbers
