@@ -8,16 +8,15 @@ ctx = bpy.context
 ops = bpy.ops
 scene = bpy.context.scene
 
-
-
 class CubeCubes:
     def __init__(self, num, times):
+        # global class variables
         # current frame
         global current_frame
         current_frame = scene.frame_current
         # total cubes
         global total_cubes
-        total_cubes = 0
+        total_cubes = num * num * num
         # current lucky numbers
         global lucky_numbers
         lucky_numbers = []
@@ -31,13 +30,6 @@ class CubeCubes:
         self.num = num
         self.times = times
         self.start(num, times)
-        # self.clean = self.clean()
-        # self.create = self.create_cubes(num)
-        # self.luckynumbers = self.get_lucky_numbers(num)
-        # self.hidecubes = self.hide_cubes()
-        # self.neighbour = self.choose_neighbour(num)
-        # self.move = self.let_move(num)
-        # self.reset = self.just_reset()
     def start(self, num, times):
         # clean possible cubecubes cache data
         self.clean()
@@ -87,19 +79,15 @@ class CubeCubes:
                   cube.active_material = mat
     def get_lucky_numbers(self, num):
         # get the pool size of the perfect cube
-        poolsize = num * num * num
+        poolsize = total_cubes
         # take some random numbers
         numbers = num + ( int(num/3) * int(num/3) )
         # use shuffle for unique random list
         global lucky_numbers
         lucky_numbers = random.sample(range(poolsize),numbers)
-        # save total cubes
-        global total_cubes
-        total_cubes = poolsize
+        
     def hide_cubes(self):
         # set names from choosen lucky numbers
-        print('lucky numbers en hide_cubes:')
-        print(lucky_numbers)
         for el in lucky_numbers:
             # get cube_name
             name = self.get_cube_name(el)
@@ -107,6 +95,8 @@ class CubeCubes:
             # save in local memory
             global hidden_cubes
             hidden_cubes.append(name)
+        print('hidden_cubes: ')
+        print(hidden_cubes)
     def get_cube_name(self, number):
         # if the number is 0 just name it Cube
         if number == 0:
@@ -152,8 +142,6 @@ class CubeCubes:
             cube_axis = self.get_cube_axis(cube_num, num)
             # get valid possible neighbors
             possible_nbr = self.possible_neighbors(cube_axis, num)
-            print('possible_nbr:')
-            print(possible_nbr)
             # select a neighbour
             neighbour = random.sample(possible_nbr, 1)[0]
             # save into movements list
@@ -274,8 +262,6 @@ class CubeCubes:
                 nbr_pool.append( back_cube_number )
         return list(nbr_pool)
     def let_move(self, num):
-        print('current frame:')
-        print(current_frame)
         # set frame
         bpy.context.scene.frame_set(current_frame)
         # moves
@@ -310,22 +296,25 @@ class CubeCubes:
     def just_reset(self):
         # empty lucky numbers
         global lucky_numbers
-        lucky_numbers = []
+        del lucky_numbers[:]
         # unhide hidden_cubes
-        print('hidden_cubes:')
-        print(hidden_cubes)
         for hcube in hidden_cubes:
             # hidden_cubes are names no numbers
             self.unhide_cube(hcube)
         # empty hidden_cubes
         global hidden_cubes
-        hidden_cubes = []
+        del hidden_cubes[:]
         for move in movements:
             # put news lucky numbers
             global lucky_numbers
             lucky_numbers.append(move[1])
             # swap names
             self.swap_names(move[0],move[1])
+        # empty movements
+        global movements
+        del movements[:]
+        print('new lucky_numbers:')
+        print(lucky_numbers)
     def swap_names(self, cube1, cube2):
         # get names
         name1 = self.get_cube_name(cube1)
@@ -342,3 +331,6 @@ class CubeCubes:
             self.choose_neighbour(num)
             self.let_move(num)
             self.just_reset()
+            # if last time then end with a hide cubes
+            if i == times - 1:
+                self.hide_cubes()
