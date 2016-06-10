@@ -27,12 +27,12 @@ class CubeCubes:
         self.set_holes(num)
         self.set_init_positions()
         self.delete_cubes()
+        # TODO: create key frame for all cubes locations
         self.loop(num, times)
-
-
     def loop(self, num, times):
         for i in range(times):
             self.choose_neighbors(num)
+            # TODO: when moves create key frame for all cubes locations
             self.move_cubes(num)
             self.update_holes()
             self.update_positions()
