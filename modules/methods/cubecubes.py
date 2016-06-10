@@ -24,11 +24,68 @@ class CubeCubes:
     def start(self, num, times):
         self.clean()
         self.create_cubes(num)
-        self.get_holes(num)
-        self.get_position()
+        self.set_holes(num)
+        self.set_init_positions()
         self.delete_cubes()
-        self.choose_neighbour(num)
-    def choose_neighbour(self, num):
+        self.loop(num, times)
+
+
+    def loop(self, num, times):
+        for i in range(times):
+            self.choose_neighbors(num)
+            self.move_cubes(num)
+            self.update_holes()
+            self.update_positions()
+            self.reset_movements()
+    def update_positions(self):
+        # get "dictionary" => (position,name)
+        # all cube pos
+        pos = self.positions
+        # set update changes
+        for item in self.movements:
+            item_pos = item[0]
+            item_name = item[1]
+            # update name into old hole
+            pos[item_pos][1] = item_name
+            # update name into new hole
+            pos[item_name][1] = -1
+        print('positions old')
+        print(self.positions)
+        self.positions = pos
+        print('new positions')
+        print(self.positions)
+
+    def reset_movements(self):
+        del self.movements[:]
+    def update_holes(self):
+        print('holes')
+        print(self.holes)
+        # clean holes
+        del self.holes[:]
+        # set new holes
+        for item in self.movements:
+            self.holes.append(item[1])
+        print('new holes')
+        print(self.holes)
+    def move_cubes(self, num):
+        # set frame
+        bpy.context.scene.frame_set(self.current_frame)
+        # moves
+        for move in self.movements:
+            # Neighbour name
+            name = self.get_cube_name(move[1])
+            # select and active neighbour
+            obj = bpy.data.objects[name]
+            obj.select = True
+            bpy.context.scene.objects.active = obj
+            # move neighbour to hole
+            to_pos = self.get_cube_axis(move[0], num)
+            to_pos = tuple(map(lambda x: (x*2+x/1.001),to_pos))
+            obj.location = to_pos
+            obj.keyframe_insert(data_path="location", index=-1)
+        # add a gap to frames
+        self.current_frame = self.current_frame + 40
+    def choose_neighbors(self, num):
         for cube_num in self.holes:
             # get cube axis => [x,y,z]
             cube_axis = self.get_cube_axis(cube_num, num)
@@ -38,8 +95,8 @@ class CubeCubes:
             neighbour = random.sample(possible_nbr, 1)[0]
             # save into movements list
             self.movements.append([cube_num, neighbour])
-            print('movements')
-            print(self.movements)
+        print('movements')
+        print(self.movements)
     def possible_neighbors(self, cube_axis, num):
         nbr_pool = []
         # up
@@ -108,10 +165,8 @@ class CubeCubes:
             # add to pool if position is not a hole
             if self.positions[back_pos][1] != -1:
                 nbr_pool.append(back_pos)
-        print('nbr_pool:')
-        print(nbr_pool)
         return list(nbr_pool)
-    def get_position(self):
+    def set_init_positions(self):
         # create a "dictionary" => (position,name)
         # all cube pos
         pos = []
@@ -121,7 +176,11 @@ class CubeCubes:
         for p in pos:
             if p[0] in self.holes:
                 p[1] = -1
+        print('init positions')
+        print(self.positions)
         self.positions = pos
+        print('first positions')
+        print(self.positions)
     def clean(self):
         # if exist holes then delete all
         if self.holes:
@@ -147,7 +206,7 @@ class CubeCubes:
                   mat.diffuse_color = (.0043,.03, i)
                   # put material to the current cube
                   cube.active_material = mat
-    def get_holes(self, num):
+    def set_holes(self, num):
         # take some random numbers
         numbers = num + ( int(num/3) * int(num/3) )
         # use shuffle for unique random list
