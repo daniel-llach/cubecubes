@@ -22,6 +22,8 @@ def SetBackground():
     bg.inputs[0].default_value[:3] = (.007,.203,.026)
     bg.inputs[1].default_value = 1.0
 def CleanAll():
+    # TODO: clean keyframe and set frame to 1
+    
     # clean all
     # clean materials
     for material in data.materials:

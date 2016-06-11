@@ -11,6 +11,6 @@ imp.reload(methods.cubecubes)
 methods.environment.SetEnvironment()
 
 # init cubecubes - size, loops
-cubes = CubeCubes(4, 3)
+cubes = CubeCubes(4, 60)
 # start cubes
 cubes.start
