@@ -10,7 +10,7 @@ imp.reload(methods.cubecubes)
 # set render, background, materials, lights and camera
 methods.environment.SetEnvironment()
 
-# init cubecubes - size, loops
-cubes = CubeCubes(4, 60)
+# init cubecubes - side, emptiness, loops
+cubes = CubeCubes(8, 0.2, 20)
 # start cubes
 cubes.start
