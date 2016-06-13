@@ -8,7 +8,7 @@ instruction to blender addons: http://blender.stackexchange.com/questions/3321/b
 git clone git@github.com:daniel-llach/cubecubes.git
 ´´´
 
-2.- Go to blender, ex:
+2.- Go to blender path, in my case is:
 ´´´
 /Applications/blender-2.77a-OSX_10.6-x86_64/blender.app/Contents/MacOS
 ´´´
