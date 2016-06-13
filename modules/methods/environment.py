@@ -7,14 +7,15 @@ scene = ctx.scene
 data = bpy.data
 world = data.worlds['World']
 
-def SetEnvironment():
+def SetEnvironment(light_camera, side):
     print('Init setEnvironment')
     reset_keyframe()
     CleanAll()
     RenderStuff()
     SetBackground()
-    SetLights()
-    SetCamera()
+    if light_camera:
+        SetLights(side)
+        SetCamera(side)
 def reset_keyframe():
     for a in bpy.data.actions: a.user_clear()
     bpy.context.scene.frame_set(1)
@@ -23,12 +24,16 @@ def RenderStuff():
     scene.world.use_nodes = True
 def SetBackground():
     bg = world.node_tree.nodes['Background']
-    bg.inputs[0].default_value[:3] = (.007,.203,.026)
+    bg.inputs[0].default_value[:3] = (0,1,0)
     bg.inputs[1].default_value = 1.0
+    # occlusion
+    bpy.context.scene.world.light_settings.use_ambient_occlusion = True
+    bpy.context.scene.world.light_settings.ao_factor = .5
+
+
 def CleanAll():
     # set frame
     bpy.context.scene.frame_set(1)
-
     # clean all
     # clean materials
     for material in data.materials:
@@ -44,21 +49,40 @@ def CleanAll():
         ops.object.select_all(action='TOGGLE')
     ops.object.select_all(action='TOGGLE')
     ops.object.delete(use_global=True)
-def SetLights():
+def SetLights(side):
+    # lamp 1
     lamp_data = data.lamps.new(name="New Lamp", type='SUN')
     lamp_object = data.objects.new(name="New Lamp", object_data=lamp_data)
     scene.objects.link(lamp_object)
-    lamp_object.location = (-4.0, -4.0, 27.85498)
-    lamp_object.rotation_mode = 'AXIS_ANGLE'
-    lamp_object.rotation_axis_angle = (71.051, 0.475, -0.758, 0.446)
+    if side is 2:
+        lamp_object.location = (-11.86172, -11.9591, 13.59292)
+        lamp_object.rotation_euler = (40.144993, -3.894570, -44.098644)
 
-    # And finally select it make active
+
+    # lamp 2
+    lamp_data2 = data.lamps.new(name="New Lamp", type='SUN')
+    lamp_object2 = data.objects.new(name="New Lamp", object_data=lamp_data)
+    scene.objects.link(lamp_object2)
+    if side is 2:
+        lamp_object2.location = (-53.76231, 20.75166, 72.84735)
+        lamp_object2.rotation_euler = (40.258, -3.805, -45.390)
+
+
+
+    # And finally select it and make active
     lamp_object.select = True
     scene.objects.active = lamp_object
-def SetCamera():
+def SetCamera(side):
     # create camera
     cam = data.cameras.new("Camera")
     cam_ob = data.objects.new("Camera", cam)
-    cam_ob.location = (-25.44964,-11.51797,35.00320)
-    cam_ob.rotation_euler = (1, 0, -1)
+    if side is 2:
+        cam_ob.location = (-29.04678,-18.19452,24.67054)
+        cam_ob.rotation_euler = (1, 0, -1)
+        bpy.data.cameras[len(bpy.data.cameras)-1].lens = 70
+    elif side is 2:
+        cam_ob.location = (-29.04678,-18.19452,24.67054)
+        cam_ob.rotation_euler = (1, 0, -1)
+        bpy.data.cameras[len(bpy.data.cameras)-1].lens = 70
+
     scene.objects.link(cam_ob)

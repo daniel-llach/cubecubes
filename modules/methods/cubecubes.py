@@ -224,7 +224,24 @@ class CubeCubes:
     def set_init_positions(self):
         for p in range(self.total_cubes):
             self.positions.append([p,p])
+    def cube_material(self):
+        # Create a new material
+        material = bpy.data.materials.new(name="Cube")
+        material.use_nodes = True
+        # Remove default
+        material.node_tree.nodes.remove(material.node_tree.nodes.get('Diffuse BSDF'))
+        material_output = material.node_tree.nodes.get('Material Output')
+        emission = material.node_tree.nodes.new('ShaderNodeBsdfDiffuse')
+        # emission.inputs['Strength'].default_value = 5.0
+        emission.inputs['Color'].default_value = (.049, .300, .542, 1)
+        emission.inputs['Roughness'].default_value = .5
+
+        # link shader shader to material
+        material.node_tree.links.new(material_output.inputs[0], emission.outputs[0])
+        return material
     def create_cubes(self):
+        # get material
+        material = self.cube_material()
         margin = 1.001
         #create cubes
         for i in range(0,self.side):
@@ -238,9 +255,4 @@ class CubeCubes:
                     bpy.ops.mesh.primitive_cube_add(location=(x,y,z))
                     # get current cube
                     cube = bpy.context.object
-                    # set material
-                    mat = bpy.data.materials.new("CUBE")
-                    k = .0266 + (k * .005)
-                    mat.diffuse_color = (.0043, .03, k)
-                    # put material to current cube
-                    cube.active_material = mat
+                    cube.active_material = material
