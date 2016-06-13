@@ -18,7 +18,6 @@ class CubeCubes:
         # public methods
         self.start()
     def start(self):
-        # self.clean()
         self.create_cubes()
         self.set_init_positions()
         self.set_init_holes_positions()
@@ -64,19 +63,17 @@ class CubeCubes:
                 self.holes.append(move[1])
             else:
                 if hole_name is not -1:
-                    print('error: hole is a cube:')
+                    print('no move: hole is a cube:')
                     print(move)
                 if pos_name == -1:
-                    print('error: cube to move is a hole:')
+                    print('no move: cube to move is a hole:')
                     print(move)
-        print('new positions:')
-        print(self.positions)
+        # print('new positions:')
+        # print(self.positions)
         self.reset_movements()
     def reset_movements(self):
         del self.movements[:]
     def choose_neighbors(self, side):
-        print('holes')
-        print(self.holes)
         for num in self.holes:
             #get cube axis => [x,y,z]
             cube_axis = self.get_cube_axis(num, side)
@@ -86,8 +83,6 @@ class CubeCubes:
             neighbour = random.sample(possible_nbr, 1)[0]
             # save into movements list
             self.movements.append([num, neighbour])
-        print('movements')
-        print(self.movements)
         self.reset_holes()
     def reset_holes(self):
         del self.holes[:]
@@ -249,16 +244,3 @@ class CubeCubes:
                     mat.diffuse_color = (.0043, .03, k)
                     # put material to current cube
                     cube.active_material = mat
-
-
-
-
-
-
-    # def clean(self):
-    #     # clean holes
-    #     if self.holes:
-    #         del self.holes[:]
-    #     # clean positions
-    #     if self.positions   :
-    #         del self.positions  [:]
