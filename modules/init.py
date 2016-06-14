@@ -10,13 +10,16 @@ imp.reload(methods.environment)
 imp.reload(methods.cubecubes)
 imp.reload(methods.videooutput)
 
+# side cube
+side = 3
+
 # set render, background, materials, lights and camera
 # light and cameras => true, side
-methods.environment.SetEnvironment(True, 2)
+methods.environment.SetEnvironment(True, side)
 methods.videooutput.Settings()
 
 # init cubecubes - side, emptiness, loops
-cubes = CubeCubes(2, 0.3, 20)
+cubes = CubeCubes(side, 0.3, 20)
 # start cubes
 cubes.start
 
