@@ -4,14 +4,16 @@ from operator import add
 from operator import sub
 
 class CubeCubes:
-    def __init__(self, side, emptiness, times):
+    def __init__(self, settings):
         # public vars
-        self.side = side
-        self.times = times
-        self.emptiness = emptiness
+        self.side = settings["side"]
+        self.loops = settings["loops"]
+        self.emptiness = settings["emptiness"]
         # local vars
         self.current_frame = bpy.context.scene.frame_current
-        self.total_cubes = side**3
+        self.total_cubes = self.side**3
+        self.margin = 3.8
+        # self.margin = 1.001
         self.holes = random.sample( range(self.total_cubes), int( self.total_cubes * self.emptiness)  )
         self.positions = []
         self.movements = []
@@ -25,7 +27,7 @@ class CubeCubes:
         self.set_keyframes()
         self.loop()
     def loop(self):
-        for i in range(self.times):
+        for i in range(self.loops):
             self.choose_neighbors(self.side)
             self.move_cubes(self.side)
             self.set_keyframes()
@@ -53,7 +55,7 @@ class CubeCubes:
                 bpy.context.scene.objects.active = obj
                 # move neighbour to hole_name
                 to_pos = self.get_cube_axis(move[0], side)
-                to_pos = tuple(map(lambda x: (x*2+x/1.001),to_pos))
+                to_pos = tuple(map(lambda x: (x*2+x/self.margin),to_pos))
                 obj.location = to_pos
                 obj.keyframe_insert(data_path="location")
                 # update in positions
@@ -242,15 +244,14 @@ class CubeCubes:
     def create_cubes(self):
         # get material
         material = self.cube_material()
-        margin = 1.001
         #create cubes
         for i in range(0,self.side):
-            x = (i*2) + i/margin
+            x = (i*2) + i/self.margin
             for j in range(0,self.side):
-                y = (j*2) + j/margin
+                y = (j*2) + j/self.margin
                 for k in range(0,self.side):
                     # set location
-                    z = (k*2) + k/margin
+                    z = (k*2) + k/self.margin
                     # create a cube
                     bpy.ops.mesh.primitive_cube_add(location=(x,y,z))
                     # get current cube

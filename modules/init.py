@@ -19,7 +19,11 @@ methods.environment.SetEnvironment(True, side)
 methods.videooutput.Settings()
 
 # init cubecubes - side, emptiness, loops
-cubes = CubeCubes(side, 0.3, 20)
+cubes = CubeCubes({
+    "side": side,
+    "emptiness": 0.3,
+    "loops": 20
+})
 # start cubes
 cubes.start
 
