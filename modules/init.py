@@ -22,7 +22,7 @@ methods.videooutput.Settings()
 cubes = CubeCubes({
     "side": side,
     "emptiness": 0.3,
-    "loops": 20
+    "loops": 1
 })
 # start cubes
 cubes.start

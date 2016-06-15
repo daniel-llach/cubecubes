@@ -12,6 +12,7 @@ class CubeCubes:
         # local vars
         self.current_frame = bpy.context.scene.frame_current
         self.total_cubes = self.side**3
+        self.unlock_cubes = []
         self.margin = 3.8
         self.holes = random.sample( range(self.total_cubes), int( self.total_cubes * self.emptiness)  )
         self.positions = []
@@ -26,13 +27,23 @@ class CubeCubes:
         self.delete_cubes()
         self.set_keyframes()
         self.set_shimzone()
-        # self.loop()
-    # def loop(self):
-    #     for i in range(self.loops):
+        self.loop()
+    def loop(self):
+        for i in range(self.loops):
+            self.cubes_status()
             # self.choose_step()
             # self.move_cubes()
             # self.update_shimzone()
             # self.set_keyframes()
+    # def choose_step(self):
+    #     for cube in
+    def cubes_status(self):
+        # update unlock cubes free to move
+        for cube in self.positions:
+            if cube[0] not in self.shimzone:
+                self.unlock_cubes.append(cube[0])
+        print('unlock_cubes:')
+        print(self.unlock_cubes)
     def set_shimzone(self):
         # get center cube
         center_cube = int(self.total_cubes / 2)
