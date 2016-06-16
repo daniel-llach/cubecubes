@@ -17,9 +17,10 @@ class CubeCubes:
         self.holes = random.sample( range(self.total_cubes), int( self.total_cubes * self.emptiness)  )
         self.positions = []
         self.shimzone = []
-        self.shim_n = 2
+        self.shim_side = 2
         self.shimholes = []
         self.movements = []
+        self.n = 0
         # public methods
         self.start()
     def start(self):
@@ -29,18 +30,13 @@ class CubeCubes:
         self.delete_cubes()
         self.set_keyframes()
         self.set_shimzone()
+        self.cubes_status()
         self.loop()
     def loop(self):
         for i in range(self.loops):
-            self.cubes_status()
             self.choose_step()
             self.move_cubes()
             self.set_keyframes()
-
-            # self.shim_move()
-            # self.update_shimzone()
-            # self.set_keyframes()
-
     def move_cubes(self):
         # set frame
         self.current_frame = self.current_frame + 15
@@ -50,101 +46,124 @@ class CubeCubes:
         # # reset holes
         # self.reset_holes()
         # moves
-        for move in self.movements:
-            # validate if cube can move
-            hole_name = self.positions[move[0]][1]
-            pos_name = self.positions[move[1]][1]
-            if hole_name is -1 and pos_name is not -1:
-                # Neighbour name
-                name = self.get_cube_name(move[1])
-                # select and active Neighbour
-                obj = bpy.data.objects[name]
-                obj.select = True
-                bpy.context.scene.objects.active = obj
-                # move neighbour to hole_name
-                to_pos = self.get_cube_axis(move[0])
-                to_pos = tuple(map(lambda x: (x*2+x/self.margin),to_pos))
-                obj.location = to_pos
-                obj.keyframe_insert(data_path="location")
-                # update in positions
-                self.positions[move[0]][1] = pos_name
-                self.positions[move[1]][1] = hole_name
-                # update holes
-                # quitar la antigua posision y poner la nueva
-                self.holes.remove(move[0])
-                self.holes.append(move[1])
-        self.reset_movements()
-    def reset_holes(self):
-        del self.holes[:]
-    def reset_shimholes(self):
-        del self.shimholes[:]
-    def reset_movements(self):
-        del self.movements[:]
-    def reset_unlock_cubes(self):
-        del self.unlock_cubes[:]
+        # validate if exist movements
+        if len(self.movements) > -1:
+            for move in self.movements:
+                # validate if cube can move
+                hole_name = self.positions[move[0]][1]
+                pos_name = self.positions[move[1]][1]
+                if hole_name is -1 and pos_name is not -1:
+                    # Neighbour name
+                    name = self.get_cube_name(move[1])
+                    # select and active Neighbour
+                    obj = bpy.data.objects[name]
+                    obj.select = True
+                    bpy.context.scene.objects.active = obj
+                    # move neighbour to hole_name
+                    to_pos = self.get_cube_axis(move[0])
+                    to_pos = tuple(map(lambda x: (x*2+x/self.margin),to_pos))
+                    obj.location = to_pos
+                    obj.keyframe_insert(data_path="location")
+                    # update in positions
+                    self.positions[move[0]][1] = pos_name
+                    self.positions[move[1]][1] = hole_name
+                    # update holes
+                    # quitar la antigua posision y poner la nueva
+                    self.holes.remove(move[0])
+                    self.holes.append(move[1])
+                    if move[0] in self.shimholes:
+                        # update shimholes
+                        self.shimholes.remove(move[0])
+                        # update unlock_cubes
+                        self.unlock_cubes.append(move[0])
+            self.reset_movements()
+
+        print(' ')
+        print('** loop after status **')
+        print('total cubes: ' + str(self.side**3))
+        print('shimzone: ' + str(self.shimzone))
+        print('shimzone size: ' + str(len(self.shimzone)))
+        print('unlock_cubes: ' + str(self.unlock_cubes))
+        print('unlock_cubes size: ' + str(len(self.unlock_cubes)))
+        print('shimholes: ' + str(self.shimholes))
+        print('shimholes size: ' + str(len(self.shimholes)))
+
     def choose_step(self):
         # chek if exist shimholes to move !!
-        if len(self.shimholes) is not 0:
-            for cube in self.unlock_cubes:
-                # get cube goal position cube
-                goal = random.sample(self.shimholes,1)[0]
-                # get axis
-                current_pos = self.get_cube_axis(cube)
-                goal_pos = self.get_cube_axis(goal)
-                # get a random axis to move
-                axis = random.sample(range(2), 1)[0]
-                # set direction to move
-                if goal_pos[axis] > current_pos[axis]:
-                    direction = current_pos
-                    direction[axis] = direction[axis] + 1
-                elif goal_pos[axis] == current_pos[axis]:
-                    direction = current_pos
-                else:
-                    direction = current_pos
-                    direction[axis] = direction[axis] - 1
-                # save into movements list
-                step = self.get_cube_position(direction)
-                if step in self.holes and not step == cube:
-                    self.movements.append([step, cube])
-        else:
-            print('todo calza!!')
-            
+        self.n = self.n + 1
+        print('n: ' + str(self.n))
+        # if len(self.shimholes) is not 0:
 
-
+        for cube in self.unlock_cubes:
+            # get cube goal position cube
+            goal = random.sample(self.shimholes,1)[0]
+            # get axis
+            current_pos = self.get_cube_axis(cube)
+            goal_pos = self.get_cube_axis(goal)
+            # get a random axis to move
+            axis = random.sample(range(2), 1)[0]
+            # set direction to move
+            if goal_pos[axis] > current_pos[axis]:
+                direction = current_pos
+                direction[axis] = direction[axis] + 1
+            elif goal_pos[axis] == current_pos[axis]:
+                direction = current_pos
+            else:
+                direction = current_pos
+                direction[axis] = direction[axis] - 1
+            # save into movements list
+            step = self.get_cube_position(direction)
+            if step in self.holes and not step == cube:
+                self.movements.append([step, cube])
+                
+        # else:
+        #     print('upgrade shimzone: ' + str(self.shim_side))
+        #     self.shim_side = self.shim_side + 1
+        #     self.set_shimzone()
+        #
+        #     self.cubes_status()
+        #     # update unlock_cubes
+        #
+        #     # clean movements
+        #     self.reset_movements()
     def cubes_status(self):
-        # update unlock cubes free to move
-        self.reset_unlock_cubes()
+        self.reset_shimholes()
         for cube in self.positions:
-            if cube[0] not in self.shimzone and cube[0] not in self.holes:
+            if cube[0] not in self.shimzone:
                 self.unlock_cubes.append(cube[0])
-        # update shim holes
-        self.shimholes = [item for item in self.shimzone if item in self.holes]
+            else:
+                if cube[1] is -1:
+                    self.shimholes.append(cube[0])
 
-        print('holes:')
-        print(self.holes)
-        print('shimholes:')
-        print(self.shimholes)
-        print('unlock_cubes:')
-        print(self.unlock_cubes)
     def set_shimzone(self):
         # get center cube
         center_cube = int(self.total_cubes / 2)
-        center_axis = self.get_cube_axis(center_cube)
         shimzone_axis = []
-        # add cubes to shimzone
-        if self.shim_n == 2:
-            shimzone_axis.append( self.sum_axis(center_axis, [0,0,0], [0,0,0]) )
-            shimzone_axis.append( self.sum_axis(center_axis, [0,0,0], [1,0,0]) )
-            shimzone_axis.append( self.sum_axis(center_axis, [0,1,0], [1,0,0]) )
-            shimzone_axis.append( self.sum_axis(center_axis, [0,1,0], [0,0,0]) )
-            shimzone_axis.append( self.sum_axis(center_axis, [0,0,0], [0,0,1]) )
-            shimzone_axis.append( self.sum_axis(center_axis, [0,0,0], [1,0,1]) )
-            shimzone_axis.append( self.sum_axis(center_axis, [0,1,0], [1,0,1]) )
-            shimzone_axis.append( self.sum_axis(center_axis, [0,1,0], [0,0,1]) )
-        # append cube numbers to shimzone
-        for cube in shimzone_axis:
-            num = self.get_cube_position(cube)
-            self.shimzone.append(num)
+
+        for i in range(self.shim_side):
+            half = self.side**2 * self.shim_side * i
+            start_cube = (center_cube + (self.side**2) * i) - half
+            shimzone_axis.append(start_cube)
+            for j in range(self.shim_side):
+                shimzone_axis.append(start_cube - (self.side * j))
+                for h in range(self.shim_side):
+                    shimzone_axis.append((start_cube - (self.side * j)) - (1*h))
+                    shimzone_axis.append( ((start_cube - (self.side * j)) - (1*h)) + (self.side * j) )
+
+        shimzone_axis = list(set(shimzone_axis))
+        for num in shimzone_axis:
+            # if is positive append to shimzone
+            if num > 0:
+                self.shimzone.append(num)
+        self.shimzone = list(set(self.shimzone))
+        for i in self.unlock_cubes:
+            if i in self.shimzone:
+                self.unlock_cubes.remove(i)
+
+        # update unlock_cubes
+
+
+
     def sum_axis(self, axis, add_op, sub_op):
         final_axis = axis
         final_axis = list( map(add, final_axis, add_op) )
@@ -252,3 +271,11 @@ class CubeCubes:
                 bpy.context.scene.objects.active = obj
                 # set location in keyframes
                 obj.keyframe_insert(data_path="location")
+    def reset_holes(self):
+        del self.holes[:]
+    def reset_shimholes(self):
+        del self.shimholes[:]
+    def reset_movements(self):
+        del self.movements[:]
+    def reset_unlock_cubes(self):
+        del self.unlock_cubes[:]

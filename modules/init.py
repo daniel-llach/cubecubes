@@ -11,7 +11,7 @@ imp.reload(methods.cubecubes)
 imp.reload(methods.videooutput)
 
 # side cube
-side = 4
+side = 3
 
 # set render, background, materials, lights and camera
 # light and cameras => true, side
@@ -22,7 +22,7 @@ methods.videooutput.Settings()
 cubes = CubeCubes({
     "side": side,
     "emptiness": 0.5,
-    "loops": 5
+    "loops": 15
 })
 # start cubes
 cubes.start
