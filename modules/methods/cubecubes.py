@@ -1,4 +1,5 @@
 import bpy
+import random
 
 class CubeCubes:
     def __init__(self, settings):
@@ -11,7 +12,6 @@ class CubeCubes:
         self.margin = 3.8
         self.center_cube = int(self.total_cubes / 2) + 1
         self.center_cube_axis = self.get_cube_axis(self.center_cube)
-        print('center_cube_axis: ' + str(self.center_cube_axis))
         self.positions = []
         self.step_positions = []
         # public methods
@@ -23,65 +23,52 @@ class CubeCubes:
         self.loop()
     def loop(self):
         for i in range(self.loops):
+            self.choose_random_steps()
             self.move_cubes()
             self.set_keyframes()
     def move_cubes(self):
-        print('positions: ')
-        print(self.positions)
-
         # set new frame
         self.current_frame = self.current_frame + 15
         bpy.context.scene.frame_set(self.current_frame)
         # unselect all
         self.unselect_all()
-        # clean step positions
-        self.reset_step_positions()
-        # actual positions before move
         # moves
-        for cube in range(self.total_cubes):
-            step = self.choose_random_steps(cube)
-            step_obj = [cube,step]
-            print('step position: ' + str(step_obj[1]))
-            print(step_obj[1] not in [x[1] for x in self.positions])
+        for cube in self.step_positions:
+            step = cube[1]
+            print('step available')
+            # cube name
+            name = self.get_cube_name(cube[0])
+            print('name: ' + str(name))
+            # select and active Neighbour
+            obj = bpy.data.objects[name]
+            obj.select = True
+            bpy.context.scene.objects.active = obj
+            # move cube to step
+            to_pos = step
+            to_pos = tuple(map(lambda x: (x*2+x/self.margin),to_pos))
+            obj.location = to_pos
+            obj.keyframe_insert(data_path="location")
+            # update positions
+            self.positions[cube[0]][1] = step
+    def choose_random_steps(self):
+        self.reset_step_positions()
+        for cube in self.positions:
+            step = cube[1]
 
-            # if step_obj[1] not in [x[1] for x in self.step_positions] and step_obj[1] not in [x[1] for x in self.positions]:
-            if step_obj[1] not in [x[1] for x in self.step_positions]:
-                print('step available')
-                # cube name
-                name = self.get_cube_name(cube)
-                # select and active Neighbour
-                obj = bpy.data.objects[name]
-                obj.select = True
-                bpy.context.scene.objects.active = obj
-                # move cube to step
-                to_pos = step
-                to_pos = tuple(map(lambda x: (x*2+x/self.margin),to_pos))
-                obj.location = to_pos
-                obj.keyframe_insert(data_path="location")
-
-                # update positions
-                self.positions[cube][1] = step
-                # save into step positions
-                self.step_positions.append([cube,step])
-
-            else:
-                print('step not available')
-
-    def choose_random_steps(self, cube):
-        current_pos = self.positions[cube][1]
-
-        # get a random axis to move
-        axis = random.sample(range(3), 1)[0]
-        # set direction to move_cubes
-        if self.center_cube_axis[axis] > current_pos[axis]:
-            current_pos[axis] = current_pos[axis] - 1
-        elif self.center_cube_axis[axis] == current_pos[axis]:
-            current_pos = current_pos
-        elif self.center_cube_axis[axis] < current_pos[axis]:
-            current_pos[axis] = current_pos[axis] + 1
-        # return step axis
-        step = current_pos
-        return step
+            if step not in [x[1] for x in self.step_positions]:
+                # get a random axis to move
+                axis = random.sample(range(3), 1)[0]
+                # set direction to move_cubes
+                if self.center_cube_axis[axis] > step[axis]:
+                    step[axis] = step[axis] - 1
+                elif self.center_cube_axis[axis] == step[axis]:
+                    step = step
+                elif self.center_cube_axis[axis] < step[axis]:
+                    step[axis] = step[axis] + 1
+                # validate
+                if step in [x[1] for x in self.positions]:
+                    # save step axis
+                    self.step_positions.append([cube[0],step])
 
     def set_keyframes(self):
         self.unselect_all()
@@ -98,7 +85,7 @@ class CubeCubes:
         for p in range(self.total_cubes):
             axis = self.get_cube_axis(p)
             self.positions.append([p,axis])
-        print('positions: ')
+        print('positions:')
         print(self.positions)
     def create_cubes(self):
         # get material
