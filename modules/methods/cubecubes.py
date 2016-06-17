@@ -15,6 +15,7 @@ class CubeCubes:
         self.unlock_cubes = []
         self.margin = 3.8
         self.holes = random.sample( range(self.total_cubes), int( self.total_cubes * self.emptiness)  )
+        self.center_cube = int(self.total_cubes / 2) + 1
         self.positions = []
         self.shimzone = []
         self.shim_n = 2
@@ -84,15 +85,15 @@ class CubeCubes:
         del self.unlock_cubes[:]
     def choose_step(self):
         # chek if exist shimholes to move !!
-        if len(self.shimholes) is not 0:
+        # if len(self.shimholes) is not 0:
             for cube in self.unlock_cubes:
                 # get cube goal position cube
-                goal = random.sample(self.shimholes,1)[0]
+                goal = random.sample(self.holes,1)[0]
                 # get axis
                 current_pos = self.get_cube_axis(cube)
-                goal_pos = self.get_cube_axis(goal)
+                goal_pos = self.get_cube_axis(self.center_cube)
                 # get a random axis to move
-                axis = random.sample(range(2), 1)[0]
+                axis = random.sample(range(3), 1)[0]
                 # set direction to move
                 if goal_pos[axis] > current_pos[axis]:
                     direction = current_pos
@@ -106,9 +107,9 @@ class CubeCubes:
                 step = self.get_cube_position(direction)
                 if step in self.holes and not step == cube:
                     self.movements.append([step, cube])
-        else:
-            print('todo calza!!')
-            
+        # else:
+        #     print('todo calza!!')
+
 
 
     def cubes_status(self):
