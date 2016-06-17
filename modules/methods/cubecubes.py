@@ -48,7 +48,7 @@ class CubeCubes:
         center_pos = self.positions[self.center_cube][1]
         print('current_pos: ' + str(current_pos))
         # get a random axis to move
-        axis = random.sample(range(2), 1)[0]
+        axis = random.sample(range(3), 1)[0]
         # set direction to move_cubes
         if center_pos[axis] > current_pos[axis]:
             current_pos[axis] = current_pos[axis] - 1
