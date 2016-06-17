@@ -10,7 +10,10 @@ class CubeCubes:
         self.total_cubes = self.side**3
         self.margin = 3.8
         self.center_cube = int(self.total_cubes / 2) + 1
+        self.center_cube_axis = self.get_cube_axis(self.center_cube)
+        print('center_cube_axis: ' + str(self.center_cube_axis))
         self.positions = []
+        self.step_positions = []
         # public methods
         self.start()
     def start(self):
@@ -23,40 +26,60 @@ class CubeCubes:
             self.move_cubes()
             self.set_keyframes()
     def move_cubes(self):
-        # set frame
+        print('positions: ')
+        print(self.positions)
+
+        # set new frame
         self.current_frame = self.current_frame + 15
         bpy.context.scene.frame_set(self.current_frame)
         # unselect all
         self.unselect_all()
+        # clean step positions
+        self.reset_step_positions()
+        # actual positions before move
         # moves
         for cube in range(self.total_cubes):
             step = self.choose_random_steps(cube)
-            # cube name
-            name = self.get_cube_name(cube)
-            # select and active Neighbour
-            obj = bpy.data.objects[name]
-            obj.select = True
-            bpy.context.scene.objects.active = obj
-            # move neighbour to hole_name
-            to_pos = step
-            to_pos = tuple(map(lambda x: (x*2+x/self.margin),to_pos))
-            obj.location = to_pos
-            obj.keyframe_insert(data_path="location")
-            # print('cube, step: ' + str(self.positions[cube][1]) + ' - ' + str(step))
+            step_obj = [cube,step]
+            print('step position: ' + str(step_obj[1]))
+            print(step_obj[1] not in [x[1] for x in self.positions])
+
+            # if step_obj[1] not in [x[1] for x in self.step_positions] and step_obj[1] not in [x[1] for x in self.positions]:
+            if step_obj[1] not in [x[1] for x in self.step_positions]:
+                print('step available')
+                # cube name
+                name = self.get_cube_name(cube)
+                # select and active Neighbour
+                obj = bpy.data.objects[name]
+                obj.select = True
+                bpy.context.scene.objects.active = obj
+                # move cube to step
+                to_pos = step
+                to_pos = tuple(map(lambda x: (x*2+x/self.margin),to_pos))
+                obj.location = to_pos
+                obj.keyframe_insert(data_path="location")
+
+                # update positions
+                self.positions[cube][1] = step
+                # save into step positions
+                self.step_positions.append([cube,step])
+
+            else:
+                print('step not available')
+
     def choose_random_steps(self, cube):
         current_pos = self.positions[cube][1]
-        center_pos = self.positions[self.center_cube][1]
-        print('current_pos: ' + str(current_pos))
+
         # get a random axis to move
         axis = random.sample(range(3), 1)[0]
         # set direction to move_cubes
-        if center_pos[axis] > current_pos[axis]:
+        if self.center_cube_axis[axis] > current_pos[axis]:
             current_pos[axis] = current_pos[axis] - 1
-        elif center_pos[axis] == current_pos[axis]:
+        elif self.center_cube_axis[axis] == current_pos[axis]:
             current_pos = current_pos
-        elif center_pos[axis] < current_pos[axis]:
+        elif self.center_cube_axis[axis] < current_pos[axis]:
             current_pos[axis] = current_pos[axis] + 1
-        # save into movements list
+        # return step axis
         step = current_pos
         return step
 
@@ -141,3 +164,5 @@ class CubeCubes:
     def unselect_all(self):
         for item in bpy.context.selectable_objects:
             item.select = False
+    def reset_step_positions(self):
+        del self.step_positions[:]
