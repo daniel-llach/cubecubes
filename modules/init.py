@@ -12,6 +12,7 @@ imp.reload(methods.videooutput)
 
 # side cube
 side = 4
+loops = 30
 
 # set render, background, materials, lights and camera
 # light and cameras => true, side
@@ -21,11 +22,11 @@ methods.videooutput.Settings()
 # init cubecubes
 cubes = CubeCubes({
     "side": side,
-    "loops": 15
+    "loops": loops
 })
 # start cubes
 cubes.start
 
 # animation duration
 scn = bpy.context.scene
-scn.frame_end = 302
+scn.frame_end = (15 * loops) + 1

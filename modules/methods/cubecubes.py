@@ -1,5 +1,7 @@
 import bpy
 import random
+import logging, sys
+logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
 class CubeCubes:
     def __init__(self, settings):
@@ -13,6 +15,7 @@ class CubeCubes:
         self.center_cube = int(self.total_cubes / 2) + 1
         self.center_cube_axis = self.get_cube_axis(self.center_cube)
         self.positions = []
+        self.to_move = []
         self.step_positions = []
         # public methods
         self.start()
@@ -34,13 +37,9 @@ class CubeCubes:
         self.unselect_all()
         # moves
         for cube in self.step_positions:
-            step = cube[1]
-            print('step available')
-            # cube name
-            name = self.get_cube_name(cube[0])
-            print('name: ' + str(name))
-            # select and active Neighbour
-            obj = bpy.data.objects[name]
+            step = cube['position']
+            # select and active cube to move
+            obj = bpy.data.objects[cube['name']]
             obj.select = True
             bpy.context.scene.objects.active = obj
             # move cube to step
@@ -48,34 +47,61 @@ class CubeCubes:
             to_pos = tuple(map(lambda x: (x*2+x/self.margin),to_pos))
             obj.location = to_pos
             obj.keyframe_insert(data_path="location")
-            # update positions
-            self.positions[cube[0]][1] = step
+            # update cube position in positions
+            index = self.find(self.positions, 'name', cube['name'])
+            self.positions[index]['position'] = step
+            # self.positions[cube['name']['position']] = step
+    def find(self, lst, key, value):
+        for i, dic in enumerate(lst):
+            if dic[key] == value:
+                return i
+        return -1
     def choose_random_steps(self):
+        self.reset_to_move()
         self.reset_step_positions()
         for cube in self.positions:
-            step = cube[1]
-
-            if step not in [x[1] for x in self.step_positions]:
-                # get a random axis to move
-                axis = random.sample(range(3), 1)[0]
-                # set direction to move_cubes
-                if self.center_cube_axis[axis] > step[axis]:
-                    step[axis] = step[axis] - 1
-                elif self.center_cube_axis[axis] == step[axis]:
-                    step = step
-                elif self.center_cube_axis[axis] < step[axis]:
-                    step[axis] = step[axis] + 1
-                # validate
-                if step in [x[1] for x in self.positions]:
+            step = cube['position'].copy()
+            axis = random.sample(range(3), 1)[0]
+            dice = random.sample(range(2), 1)[0]
+            if dice % 2 == 0:
+                step[axis] = step[axis] + 1
+                if step not in [x['position'] for x in self.positions] and step not in [x['position'] for x in self.step_positions] and step not in [x['position'] for x in self.to_move]:
                     # save step axis
-                    self.step_positions.append([cube[0],step])
-
+                    self.step_positions.append({
+                        'name': cube['name'],
+                        'position': step
+                    })
+                    # save in cube to move
+                    self.to_move.append(cube)
+                # else:
+                #     if step in [x['position'] for x in self.positions]:
+                #         logging.info('step exist in positions')
+                #     if step in [x['position'] for x in self.step_positions]:
+                #         logging.info('step exist in step_positions')
+                #     if step in [x['position'] for x in self.to_move]:
+                #         logging.info('step exist in to_move')
+            else:
+                step[axis] = step[axis] - 1
+                if step not in [x['position'] for x in self.positions] and step not in [x['position'] for x in self.step_positions] and step not in [x['position'] for x in self.to_move]:
+                    # save step axis
+                    self.step_positions.append({
+                        'name': cube['name'],
+                        'position': step
+                    })
+                    # save in cube to move
+                    self.to_move.append(cube)
+                # else:
+                #     if step in [x['position'] for x in self.positions]:
+                #         logging.info('step exist in positions')
+                #     if step in [x['position'] for x in self.step_positions]:
+                #         logging.info('step exist in step_positions')
+                #     if step in [x['position'] for x in self.to_move]:
+                #         logging.info('step exist in to_move')
     def set_keyframes(self):
         self.unselect_all()
         for cube in self.positions:
             # warning: quite validacion -1
-            name = self.get_cube_name(cube[0])
-            obj = bpy.data.objects[name]
+            obj = bpy.data.objects[cube['name']]
             # select and active
             obj.select = True
             bpy.context.scene.objects.active = obj
@@ -83,10 +109,10 @@ class CubeCubes:
             obj.keyframe_insert(data_path="location")
     def set_init_positions(self):
         for p in range(self.total_cubes):
-            axis = self.get_cube_axis(p)
-            self.positions.append([p,axis])
-        print('positions:')
-        print(self.positions)
+            self.positions.append({
+                'name': self.get_cube_name(p),
+                'position': self.get_cube_axis(p)
+            })
     def create_cubes(self):
         # get material
         material = self.cube_material()
@@ -103,7 +129,6 @@ class CubeCubes:
                     # get current cube
                     cube = bpy.context.object
                     cube.active_material = material
-        print('cubes created')
     def cube_material(self):
         # Create a new material
         material = bpy.data.materials.new(name="Cube")
@@ -126,9 +151,7 @@ class CubeCubes:
         cube_pos = x+y+z
         return cube_pos
     def get_cube_name(self, pos):
-        name = self.positions[pos][0]
-        if name == -1:
-            name = pos
+        name = pos
         if name == 0:
             cubename = 'Cube'
         else:
@@ -153,3 +176,10 @@ class CubeCubes:
             item.select = False
     def reset_step_positions(self):
         del self.step_positions[:]
+    def reset_to_move(self):
+        del self.to_move[:]
+    def sum_axis(self, axis, add_op, sub_op):
+        final_axis = axis
+        final_axis = list( map(add, final_axis, add_op) )
+        final_axis = list( map(sub, final_axis, sub_op) )
+        return final_axis
