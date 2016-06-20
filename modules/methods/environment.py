@@ -64,6 +64,10 @@ def SetLights(side):
         lamp_object.location = (-10.10983, 1.86256, 11.46176)
         lamp_object.rotation_euler = (-0.509, 0.010, 1.924)
 
+    if side is 8:
+        lamp_object.location = (-7.88564, 0, 32.17179)
+        lamp_object.rotation_euler = (-0.509, 0.010, 1.924)
+
     # lamp 2
     lamp_data2 = data.lamps.new(name="New Lamp", type='SUN')
     lamp_object2 = data.objects.new(name="New Lamp", object_data=lamp_data)
@@ -87,6 +91,10 @@ def SetCamera(side):
         cam_ob.rotation_euler = (0.9075, 0, -1)
     elif side is 4:
         cam_ob.location = (-5.61529,-2.12547,10.20862)
+        cam_ob.rotation_euler = (0.9075, 0, -1)
+
+    elif side is 8:
+        cam_ob.location = (-13.91866,-4.28316,25.84918)
         cam_ob.rotation_euler = (0.9075, 0, -1)
 
     bpy.data.cameras[len(bpy.data.cameras)-1].lens = 2.77

@@ -11,8 +11,8 @@ imp.reload(methods.cubecubes)
 imp.reload(methods.videooutput)
 
 # side cube
-side = 4
-loops = 30
+side = 8
+loops = 60
 
 # set render, background, materials, lights and camera
 # light and cameras => true, side
